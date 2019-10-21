@@ -1,0 +1,3 @@
+nginx-data
+.env*
+!.env.sample

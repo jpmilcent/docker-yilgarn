@@ -1,0 +1,10 @@
+version: "3"
+
+services:
+
+  kimsufi:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./kimsufi.conf:/app/kimsufi/config/kimsufi.conf

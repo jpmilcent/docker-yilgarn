@@ -1,0 +1,50 @@
+#
+# kimsufi.conf.sample: kimsufi default configuration file.
+#
+# kimsufi: Connect and manage your mail account through IMAP.
+# Copyright (C) 2018 pofilo <git@pofilo.fr>
+#
+# This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with this program. If not, see <http://www.gnu.org/licenses/>.
+#
+
+
+#########################
+#        GENERAL        #
+#########################
+[GENERAL]
+API_URL = https://www.ovh.com/engine/api/dedicated/server/availabilities?country=FR
+ID_SERVER = 1801sk13
+POLLING_INTERVAL = 10
+# FATAL, ERROR, WARN, INFO, DEBUG
+LOG_LEVEL = INFO
+
+#########################
+#     NOTIFICATIONS     #
+#########################
+#[HTTP_REQUEST]
+#REQUEST_FOUND = http://.....
+#REQUEST_NOT_FOUND = http://.....
+[EMAIL]
+SMTP_SERVER = <smtp_server>
+SMTP_PORT = 465
+SMTP_FROM = <smtp_from_email>
+SMTP_PASSWORD = <password>
+SMTP_TO = <smtp_to_email>
+#[TELEGRAM]
+#TOKEN = xxx
+#CHATID = 123456789
+
+#########################
+#         ZONES         #
+#########################
+# You can add or remove zones as you want
+[ZONES]
+ZONE1 = gra
+#ZONE2 = rbx
+#ZONE3 = sbg
+#ZONE4 = par
+#ZONE5 = sgp

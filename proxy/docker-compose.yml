@@ -1,0 +1,45 @@
+version: "3"
+
+services:
+  nginx-proxy:
+    image: jwilder/nginx-proxy:latest
+    container_name: nginx-proxy
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx-data/conf.d:/etc/nginx/conf.d
+      - ./nginx-data/vhost.d:/etc/nginx/vhost.d
+      - ./nginx-data/html:/usr/share/nginx/html
+      - ./nginx-data/certs:/etc/nginx/certs:ro
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+    logging:
+      driver: json-file
+      options:
+        max-size: 4m
+        max-file: "10"
+
+  nginx-letsencrypt:
+    image: jrcs/letsencrypt-nginx-proxy-companion
+    container_name: nginx-proxy-letsencrypt
+    restart: always
+    environment:
+      DEFAULT_EMAIL: jpm@clapas.org
+      NGINX_PROXY_CONTAINER: nginx-proxy
+    volumes:
+      - ./nginx-data/conf.d:/etc/nginx/conf.d
+      - ./nginx-data/vhost.d:/etc/nginx/vhost.d
+      - ./nginx-data/html:/usr/share/nginx/html
+      - ./nginx-data/certs:/etc/nginx/certs:rw
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    logging:
+      driver: json-file
+      options:
+        max-size: 2m
+        max-file: "10"
+
+networks:
+  default:
+    external:
+      name: nginx-proxy
+
