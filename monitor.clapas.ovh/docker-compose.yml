@@ -13,40 +13,6 @@ services:
     volumes:
       - influxdb-storage:/var/lib/influxdb/data
 
-  # chronograf:
-  #   image: chronograf:1.7.14
-  #   container_name: monitor.clapas.ovh_chronograf
-  #   expose:
-  #     - 8888
-  #   depends_on:
-  #     - influxdb
-  #   networks:
-  #     - nginx-proxy
-  #     - monitoring
-  #   environment:
-  #     VIRTUAL_HOST: monitor.clapas.ovh
-  #     VIRTUAL_PORT: 8888
-  #     #LETSENCRYPT_HOST: monitor.clapas.ovh
-  #     INFLUXDB_URL: http://influxdb:8086
-  #   volumes:
-  #     - chronograf-storage:/var/lib/chronograf
-
-  # kapacitor:
-  #   image: kapacitor:1.5.3
-  #   hostname: kapacitor
-  #   restart: always
-  #   expose:
-  #     - 9092
-  #   depends_on:
-  #     - influxdb
-  #   networks:
-  #     - monitoring
-  #   environment:
-  #     KAPACITOR_INFLUXDB_0_URLS_0: http://influxdb:8086
-  #   volumes:
-  #     #- ./kapacitor/kapacitor.conf:/etc/kapacitor/kapacitor.conf:ro
-  #     - kapacitor-storage:/var/lib/kapacitor
-
   telegraf:
     image: telegraf:1.10.4
     container_name: monitor.clapas.ovh_telegraf
@@ -82,15 +48,13 @@ services:
     environment:
       VIRTUAL_HOST: monitor.clapas.ovh
       VIRTUAL_PORT: 3000
-      #LETSENCRYPT_HOST: monitor.clapas.ovh
+      LETSENCRYPT_HOST: monitor.clapas.ovh
     volumes:
       - grafana-storage:/var/lib/grafana
 
 volumes:
-  #chronograf-storage:
   grafana-storage:
   influxdb-storage:
-  #kapacitor-storage:
 
 networks:
   nginx-proxy:
