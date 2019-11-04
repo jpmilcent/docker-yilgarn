@@ -1,0 +1,45 @@
+version: "3"
+
+services:
+
+  git-clapas-webserver:
+    image: nginx:1.17.4
+    container_name: git.clapas.org_webserver
+    restart: unless-stopped
+    ports:
+      - 8084:80
+    depends_on:
+      - git-clapas-forge
+    environment:
+      VIRTUAL_HOST: git.clapas.org
+      VIRTUAL_PORT: 8084
+      LETSENCRYPT_HOST: git.clapas.org
+    volumes:
+      - ./nginx/app.conf:/etc/nginx/conf.d/default.conf:ro
+
+  git-clapas-forge:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        GOGS_BACKUP_DATE: "2019-10-29"
+        GOGS_USER_GIT_UID: "1002"
+        GOGS_USER_GIT_GID: "1002"
+    image: gogs/gogs:0.11.91
+    container_name: git.clapas.org_forge
+    restart: unless-stopped
+    expose:
+      - 3000
+    ports:
+      - 127.0.0.1:10022:22
+    volumes:
+      - /home/git/.ssh:/data/git/.ssh
+      - gogs-storage:/data
+
+volumes:
+  gogs-storage:
+
+networks:
+  default:
+    external:
+      name: nginx-proxy
