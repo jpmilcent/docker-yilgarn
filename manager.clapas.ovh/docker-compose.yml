@@ -1,0 +1,29 @@
+version: "3"
+
+services:
+  portainer:
+    image: portainer/portainer:1.22.1
+    container_name: manager.clapas.ovh_portainer
+    command: -H unix:///var/run/docker.sock
+    restart: unless-stopped
+    env_file: .env
+    expose:
+      - 9000
+      - 8000
+    hostname: ${HOSTNAME}
+    environment:
+      VIRTUAL_HOST: ${DOMAIN}
+      VIRTUAL_PORT: 9000
+      LETSENCRYPT_HOST: ${DOMAIN}
+    command: --admin-password ${ENCRYPTED_PASSWORD}
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer-storage:/data
+
+volumes:
+  portainer-storage:
+
+networks:
+  default:
+    external:
+      name: ${NETWORK}
