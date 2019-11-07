@@ -11,12 +11,16 @@ services:
     depends_on:
       - memos-clapas-wiki
     environment:
-      VIRTUAL_HOST: wiki.clapas.org
+      VIRTUAL_HOST: memos.clapas.org
       VIRTUAL_PORT: 8083
       LETSENCRYPT_HOST: memos.clapas.org
     volumes:
       - ./nginx/app.conf:/etc/nginx/conf.d/default.conf:ro
       - dokuwiki-storage:/var/www/html
+      - data-dokuwiki-storage:/var/www/html/data
+      - plugins-dokuwiki-storage:/var/www/html/lib/plugins/
+      - conf-dokuwiki-storage:/var/www/html/conf
+      - tpl-dokuwiki-storage:/var/www/html/lib/tpl/
 
   memos-clapas-wiki:
     build:
