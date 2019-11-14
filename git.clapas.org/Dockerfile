@@ -5,6 +5,7 @@ ARG     GOGS_USER_GIT_UID
 ARG     GOGS_USER_GIT_GID
 
 ADD    ./backup/${GOGS_BACKUP_DATE}_gogs_backup.tar.bz2 /data
+COPY   ./backup/${GOGS_BACKUP_DATE}_gogs_app.ini /data/gogs/conf/app.ini
 
 WORKDIR /etc
 SHELL   ["/bin/bash", "-c"]
