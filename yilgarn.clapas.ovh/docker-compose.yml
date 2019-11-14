@@ -5,13 +5,12 @@ services:
   yilgarn-clapas-webserver:
     image: nginx:1.17.4
     container_name: yilgarn.clapas.ovh_webserver
-    ports:
-      - 8081:80
+    expose:
+      - 80
     depends_on:
       - yilgarn-clapas-php
     environment:
       VIRTUAL_HOST: yilgarn.clapas.ovh
-      VIRTUAL_PORT: 8081
       LETSENCRYPT_HOST: yilgarn.clapas.ovh
     volumes:
       - ./nginx/app.conf:/etc/nginx/conf.d/default.conf:ro
