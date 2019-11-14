@@ -30,7 +30,7 @@
 
 ## Docker installation
 
-Contient les scripts Docker pour installer et administrer le serveur Yilgarn.
+Ce dépot contient les scripts Docker pour installer et administrer le serveur Yilgarn.
 
 ### Synchronisation avec le serveur
 
@@ -81,6 +81,13 @@ rsync -av --delete-excluded \
 - Se connecter en tant que `git` : `su - git`
 - Générer une clé SSH pour l'utilisateur `git` de l'hôte : `ssh-keygen`
 
+#### Passbolt
+
+- Installer habeged : `aptitude install haveged`
+- Tester l'envoie d'email :
+  - se connecter dans le container : `docker exec -it <container-name> /bin/bash`
+  - lancer la commande : `./bin/cake passbolt send_test_email --recipient=youremail@domain.com`
+
 ## Notes sur Docker
 
 ### Création d'une image contenant un backup
@@ -95,3 +102,13 @@ Pour construire un tel fichier de backup au format `tar.bz2` :
 - utiliser la commande : `tar cfvj ../2019-10-29_mon-appli_backup.tar.bz2 .`
 
 Solution alternative : `RUN tar xfj gogs.tar.bz2 -C /data --strip-components 1 && rm -f gogs.tar.bz2`
+
+## Notes divers
+
+### SMTP OVH
+
+- Hôte : ssl0.ovh.net
+- Port : 587
+- Username : jean-pascal.milcent@clapas.org (mettre l'adresse du compte email et pas un alias)
+- Password : le mot de passe
+- TLS : true
