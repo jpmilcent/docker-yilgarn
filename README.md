@@ -42,7 +42,7 @@ rsync -av --delete-excluded \
   --exclude='/.gitignore'  \
   --exclude='/.editorconfig' \
   ./ \
-  admin@yilgarn:/home/admin/yilgarn
+  admin@yilgarn:/home/admin/yilgarn/
  ```
 
 ### Étapes
@@ -52,7 +52,37 @@ rsync -av --delete-excluded \
 
 ### Configuration spéciale de l'hôte
 
-#### Gogs
+#### Gogs - Utilisation du domaine git.clapas.org avec git
+
+- Utiliser le nom du domaine pour nommer le container : `git.clapas.org`
+- Dans le fichier `app.ini` de Gogs :
+  - utiliser le nom de domaine / nom du container pour les propriétés suivantes :
+    - `DOMAIN           = git.clapas.org`
+    - `ROOT_URL         = http://git.clapas.org:3000/`
+  - fixer à `true` la propriété `REWRITE_AUTHORIZED_KEYS_AT_START`
+- Éditer en local votre fichier : `vi ~/.ssh/config`
+- Ajouter une entrée :
+  
+  ```ssh
+  Host git.clapas.org
+    Hostname 5.135.158.209
+    User git
+    Port 10022
+  ```
+
+- Il est maintenant possible d'utiliser des urls au format : `git clone git@git.clapas.org:docker/yilgarn.git`
+
+#### Gogs - Erreurs suite à migration des dépôts
+
+- En cas d'erreur : `dial tcp 127.0.0.1:3306: connect: connection refused`
+  - Dans le fichier `app.ini` utiliser un chemin absolu pour la propriété `PATH` de la section `[database]`
+- En cas d'erreur : `hooks/pre-receive: line 2: /home/git/gogs/gogs: No such file or directory`
+  - Se rendre dans l'admin de Gogs : https://git.clapas.org/admin
+  - Cliquer sur `Exécuter` pour l'action : `Re-synchroniser les crochets pre-receive, update et post-receive de tous les dépôts.`
+
+#### Gogs - Tentative utilisateur git host et container identique
+
+**ATTENION** : je n'ai pas réussi à faire fonctionner les manip ci-dessous. Le container de Gogs (v0.11.91) remettant tout le temps à 1000 l'UID de l'utilisateur *git*.
 
 - Créer un utilisateur `git` : `adduser git`
 - Rechercher l'uid et le gid de l'utilisateur git dans le fichier /etc/passwd. S'ils sont différent de 1000 alors :
