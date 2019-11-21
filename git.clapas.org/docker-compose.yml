@@ -22,8 +22,6 @@ services:
       dockerfile: Dockerfile
       args:
         GOGS_BACKUP_DATE: "2019-10-29"
-        GOGS_USER_GIT_UID: "1002"
-        GOGS_USER_GIT_GID: "1002"
     image: gogs/gogs:0.11.91
     container_name: git.clapas.org
     restart: unless-stopped
@@ -32,7 +30,6 @@ services:
     ports:
       - "10022:22"
     volumes:
-      - /home/git/.ssh:/data/git/.ssh
       - gogs-storage:/data
 
 volumes:
