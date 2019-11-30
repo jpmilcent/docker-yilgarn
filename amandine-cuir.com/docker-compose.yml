@@ -3,25 +3,24 @@ version: "3"
 services:
 
   amandine-cuir-webserver:
-    image: nginx:1.17.4
-    container_name: amandine-cuir.com_webserver
+    image: nginx:1.17.6
+    container_name: amandine-cuir-webserver
     restart: unless-stopped
-    ports:
-      - 8080:80
+    expose:
+      - 80
     depends_on:
       - amandine-cuir-cms
     environment:
       VIRTUAL_HOST: amandine-cuir.com
-      VIRTUAL_PORT: 8080
       LETSENCRYPT_HOST: amandine-cuir.com
     volumes:
+      - wordpress-storage:/var/www/html
       - ./nginx/app.conf:/etc/nginx/conf.d/default.conf:ro
-      - wordpress_data:/var/www/html
       - ./test:/var/www/html/test
 
   amandine-cuir-cms:
-    image: wordpress:5.2.3-php7.3-fpm
-    container_name: amandine-cuir.com_cms
+    image: wordpress:5.2.4-php7.3-fpm
+    container_name: amandine-cuir-cms
     restart: unless-stopped
     env_file: .env
     expose:
@@ -29,9 +28,9 @@ services:
     depends_on:
       - amandine-cuir-database
     environment:
-      WORDPRESS_DB_HOST: amandine-cuir.com_database:3306
-      WORDPRESS_DB_USER: $MYSQL_USER
-      WORDPRESS_DB_PASSWORD: $MYSQL_PASSWORD
+      WORDPRESS_DB_HOST: amandine-cuir-database:3306
+      WORDPRESS_DB_USER: ${MYSQL_USER}
+      WORDPRESS_DB_PASSWORD: ${MYSQL_PASSWORD}
       WORDPRESS_DB_NAME: amandine_cuir
       WORDPRESS_TABLE_PREFIX: ac_
       #WORDPRESS_AUTH_KEY: -8_8?Mx1WRl+3j#ot&rinIl#O[`+]dSOsel|BG`v$a]FM9$-l]#i:C1|?Y>lt+0m
@@ -44,7 +43,7 @@ services:
       #WORDPRESS_NONCE_SALT: iBwH+}=t]0u?~oB_3$c.D3|S}N,00d.-U@f,yQ~CNL|}&.4xv&I3@$=[bZrhT0h.
       WORDPRESS_DEBUG: 1
     volumes:
-      - wordpress_data:/var/www/html
+      - wordpress-storage:/var/www/html
       - ./wp-content:/var/www/html/wp-content
       - ./test:/var/www/html/test
 
@@ -52,7 +51,7 @@ services:
   amandine-cuir-database:
     image: mariadb:10.2.27
     # https://hub.docker.com/_/mariadb
-    container_name: amandine-cuir.com_database
+    container_name: amandine-cuir-database
     restart: unless-stopped
     env_file: .env
     expose:
@@ -62,25 +61,30 @@ services:
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      # See : https://github.com/docker-library/mariadb/issues/160
+      MYSQL_INITDB_SKIP_TZINFO: "yes"
     volumes:
-      - db_data:/var/lib/mysql
-      #- ./database/data:/var/lib/mysql
+      - db-storage:/var/lib/mysql
       - ./database/initdb.d/:/docker-entrypoint-initdb.d/
 
   amandine-cuir-database-admin:
     image: adminer
     # https://hub.docker.com/_/adminer
-    container_name: amandine-cuir.com_database-admin
+    container_name: amandine-cuir-database-admin
     restart: unless-stopped
-    ports:
-      - 8082:8080
+    expose:
+      - 8080
+    depends_on:
+      - amandine-cuir-database
     environment:
+      VIRTUAL_HOST: adminer.amandine-cuir.com
+      LETSENCRYPT_HOST: adminer.amandine-cuir.com
       ADMINER_DESIGN: lucas-sandery
-      ADMINER_DEFAULT_SERVER: amandine-cuir.com_database
+      ADMINER_DEFAULT_SERVER: amandine-cuir-database
 
 volumes:
-  wordpress_data:
-  db_data:
+  wordpress-storage:
+  db-storage:
 
 networks:
   default:
