@@ -3,8 +3,9 @@ version: "3"
 services:
 
   yilgarn-clapas-webserver:
-    image: nginx:1.17.4
+    image: nginx:1.17.6
     container_name: yilgarn.clapas.ovh_webserver
+    restart: unless-stopped
     expose:
       - 80
     depends_on:
@@ -17,7 +18,7 @@ services:
       - ./data:/var/www/html
 
   yilgarn-clapas-php:
-    image: php:7.3.10-fpm-buster
+    image: php:7.3.12-fpm-buster
     container_name: yilgarn.clapas.ovh_php-test
     restart: unless-stopped
     expose:
