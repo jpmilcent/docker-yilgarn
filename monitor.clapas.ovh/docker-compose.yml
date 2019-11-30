@@ -4,6 +4,7 @@ services:
   influxdb:
     image: influxdb:1.7.8
     container_name: monitor.clapas.ovh_influxdb
+    restart: unless-stopped
     expose:
       - 8086
     env_file:
@@ -19,6 +20,7 @@ services:
     env_file:
       - ./telegraf/.env.telegraf
     hostname: yilgarn
+    restart: unless-stopped
     depends_on:
       - influxdb
     networks:
@@ -37,6 +39,7 @@ services:
   grafana:
     image: grafana/grafana:6.4.3
     container_name: monitor.clapas.ovh_grafana
+    restart: unless-stopped
     expose:
       - 3000
     env_file:
