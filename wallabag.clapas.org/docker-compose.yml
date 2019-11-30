@@ -1,0 +1,32 @@
+version: "3"
+
+services:
+
+  wallabag:
+    # https://hub.docker.com/r/wallabag/wallabag
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        BACKUP_DATE: "2019-10-29"
+    image: wallabag/wallabag:2.3.8
+    container_name: wallabag.clapas.org
+    restart: unless-stopped
+    expose:
+      - 80
+    environment:
+      VIRTUAL_HOST: wallabag.clapas.org
+      LETSENCRYPT_HOST: wallabag.clapas.org
+      SYMFONY__ENV__DOMAIN_NAME: "https://wallabag.clapas.org"
+    volumes:
+      - data-wallabag-storage:/var/www/wallabag/data
+      - images-wallabag-storage:/var/www/wallabag/web/assets/images
+
+volumes:
+  data-wallabag-storage:
+  images-wallabag-storage:
+
+networks:
+  default:
+    external:
+      name: nginx-proxy
