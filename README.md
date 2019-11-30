@@ -82,7 +82,7 @@ rsync -av --delete-excluded \
 
 #### Gogs - Tentative utilisateur git host et container identique
 
-**ATTENION** : je n'ai pas réussi à faire fonctionner les manip ci-dessous. Le container de Gogs (v0.11.91) remettant tout le temps à 1000 l'UID de l'utilisateur *git*.
+**ATTENION** : je n'ai pas réussi à faire fonctionner les manip ci-dessous. Le container de Gogs (v0.11.91) remettant tout le temps à 1000 l'UID de l'utilisateur *git*. Finalement, l'utilisation du fichier `.ssh/config` avec la redirection vers le port 10022 pour le domaine git.clapas.org résoud aussi très bien ce problème.
 
 - Créer un utilisateur `git` : `adduser git`
 - Rechercher l'uid et le gid de l'utilisateur git dans le fichier /etc/passwd. S'ils sont différent de 1000 alors :
