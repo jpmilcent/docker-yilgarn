@@ -1,10 +1,10 @@
-FROM php:7.3.11-fpm-buster
+FROM php:7.3.18-fpm-buster
 
 LABEL author="Jean-Pascal MILCENT" \
-  version="1" \
+  version="2" \
   maintainer="jpm@clapas.org"
 
-ENV DW_VERSION=2018-04-22b
+ENV DW_VERSION=2018-04-22c
 ENV DW_DOWNLOAD_URL=https://download.dokuwiki.org/src/dokuwiki/dokuwiki-${DW_VERSION}.tgz
 ENV DW_MD5_CHECKSUM=605944ec47cd5f822456c54c124df255
 

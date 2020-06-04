@@ -3,7 +3,7 @@ version: "3"
 services:
 
   memos-clapas-webserver:
-    image: nginx:1.17.4
+    image: nginx:1.18.0
     container_name: memos.clapas.org_webserver
     restart: unless-stopped
     expose:
