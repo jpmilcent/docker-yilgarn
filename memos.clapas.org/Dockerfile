@@ -6,7 +6,7 @@ LABEL author="Jean-Pascal MILCENT" \
 
 ENV DW_VERSION=2018-04-22c
 ENV DW_DOWNLOAD_URL=https://download.dokuwiki.org/src/dokuwiki/dokuwiki-${DW_VERSION}.tgz
-ENV DW_MD5_CHECKSUM=605944ec47cd5f822456c54c124df255
+ENV DW_MD5_CHECKSUM=6272e552b9a71a764781bd4182dd2b7d
 
 RUN apt-get update && \
     apt-get -y upgrade && \
