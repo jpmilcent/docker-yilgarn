@@ -4,11 +4,11 @@ services:
 
   wallabag:
     # https://hub.docker.com/r/wallabag/wallabag
-    build:
-      context: .
-      dockerfile: Dockerfile
-      args:
-        BACKUP_DATE: "2019-10-29"
+    #build:
+    #  context: .
+    #  dockerfile: Dockerfile
+    #  args:
+    #    BACKUP_DATE: "2019-10-29"
     image: wallabag/wallabag:2.3.8
     container_name: wallabag.clapas.org
     restart: unless-stopped
