@@ -3,7 +3,8 @@ version: "3"
 services:
 
   pwd-clapas-passbolt:
-    image: passbolt/passbolt:2.11.0-debian
+    image: passbolt/passbolt:2.12.1-debian
+    # https://hub.docker.com/r/passbolt/passbolt
     container_name: pwd-clapas-passbolt
     restart: always
     expose:
@@ -27,7 +28,7 @@ services:
     command: ["/docker-entrypoint.sh"]
 
   pwd-clapas-database:
-    image: mariadb:10.3
+    image: mariadb:10.3.23
     # https://hub.docker.com/_/mariadb
     container_name: pwd-clapas-database
     restart: unless-stopped
