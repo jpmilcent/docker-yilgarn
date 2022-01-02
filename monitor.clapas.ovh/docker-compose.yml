@@ -1,22 +1,48 @@
-version: "3"
+version: "3.9"
 
 services:
   influxdb:
-    image: influxdb:1.7.8
-    container_name: monitor.clapas.ovh_influxdb
+    image: influxdb:2.1.1
+    container_name: influxdb
     restart: unless-stopped
     expose:
       - 8086
     env_file:
       - ./influxdb/.env.influxdb
     networks:
+      - nginx-proxy
       - monitoring
+    environment:
+      VIRTUAL_HOST: influxdb.clapas.org
+      VIRTUAL_PORT: 8086
+      LETSENCRYPT_HOST: influxdb.clapas.org
     volumes:
       - influxdb-storage:/var/lib/influxdb/data
+      - data-influxdb2-storage:/var/lib/influxdb2
+      - conf-influxdb2-storage:/etc/influxdb2
+
+  influx-cli:
+    #  Initializes influxdb user/password/bucket...
+    image: influxdb:2.1.1
+    container_name: influx-cli
+    env_file:
+      - ./influxdb/.env.influxdb
+    networks:
+      - monitoring
+    depends_on:
+      - influxdb
+    command: sh -c 'sleep 5; influx setup
+      --bucket "${INFLUXDB2_INIT_BUCKET}"
+      --token "${INFLUXDB2_INIT_ADMIN_TOKEN}"
+      --org "${INFLUXDB2_INIT_ORG}"
+      --username=${INFLUXDB2_INIT_USERNAME}
+      --password=${INFLUXDB2_INIT_PASSWORD}
+      --host=http://influxdb:8086
+      --force'
 
   telegraf:
-    image: telegraf:1.10.4
-    container_name: monitor.clapas.ovh_telegraf
+    image: telegraf:1.21.1
+    container_name: telegraf
     env_file:
       - ./telegraf/.env.telegraf
     hostname: yilgarn
@@ -25,10 +51,17 @@ services:
       - influxdb
     networks:
       - monitoring
+    # To authorize telgraf to access to /run/docker.sock set host docker gid
+    # Find docker gid with: stat -c '%g' /var/run/docker.sock
+    # Or run docker-compose like this:
+    user: "telegraf:${DOCKER_GID:-998}"
     environment:
       HOST_PROC: /host/proc
       HOST_SYS: /host/sys
       HOST_ETC: /host/etc
+      INFLUXDB2_INIT_ORG: $INFLUXDB2_INIT_ORG
+      INFLUXDB2_INIT_BUCKET: $INFLUXDB2_INIT_BUCKET
+      INFLUXDB2_TELEGRAF_TOKEN: $INFLUXDB2_TELEGRAF_TOKEN
     volumes:
       - ./telegraf/telegraf.conf:/etc/telegraf/telegraf.conf:ro
       - /etc:/rootfs/etc:ro
@@ -37,8 +70,8 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
 
   grafana:
-    image: grafana/grafana:6.4.3
-    container_name: monitor.clapas.ovh_grafana
+    image: grafana/grafana:8.3.3
+    container_name: grafana
     restart: unless-stopped
     expose:
       - 3000
@@ -59,6 +92,9 @@ services:
 volumes:
   grafana-storage:
   influxdb-storage:
+  data-influxdb2-storage:
+  conf-influxdb2-storage:
+  certs:
 
 networks:
   nginx-proxy:

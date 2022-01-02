@@ -1,9 +1,9 @@
-version: "3"
+version: "3.9"
 
 services:
 
   pwd-clapas-passbolt:
-    image: passbolt/passbolt:2.12.1-debian
+    image: passbolt/passbolt:3.4.0-ce
     # https://hub.docker.com/r/passbolt/passbolt
     container_name: pwd-clapas-passbolt
     restart: always
@@ -20,15 +20,13 @@ services:
       VIRTUAL_HOST: pwd.clapas.org
       LETSENCRYPT_HOST: pwd.clapas.org
     volumes:
-      - gpg-storage:/var/www/passbolt/config/gpg
-      - images-storage:/var/www/passbolt/webroot/img/public
+      - gpg-storage:/etc/passbolt/gpg
+      - images-storage:/usr/share/php/passbolt/webroot/img/public
     tty: true
-    tmpfs:
-      - /run
     command: ["/docker-entrypoint.sh"]
 
   pwd-clapas-database:
-    image: mariadb:10.3.23
+    image: mariadb:10.7.1
     # https://hub.docker.com/_/mariadb
     container_name: pwd-clapas-database
     restart: unless-stopped

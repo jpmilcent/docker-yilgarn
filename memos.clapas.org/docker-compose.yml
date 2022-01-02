@@ -1,9 +1,9 @@
-version: "3"
+version: "3.9"
 
 services:
 
   memos-clapas-webserver:
-    image: nginx:1.18.0
+    image: nginx:1.21.4
     container_name: memos.clapas.org_webserver
     restart: unless-stopped
     expose:

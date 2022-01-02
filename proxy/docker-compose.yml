@@ -1,4 +1,4 @@
-version: "3"
+version: "3.9"
 
 services:
   nginx-proxy:
@@ -22,7 +22,7 @@ services:
         max-file: "10"
 
   nginx-proxy-letsencrypt:
-    image: jrcs/letsencrypt-nginx-proxy-companion
+    image: jrcs/letsencrypt-nginx-proxy-companion:latest
     container_name: nginx-proxy-letsencrypt
     depends_on:
       - nginx-proxy

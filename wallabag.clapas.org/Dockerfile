@@ -1,4 +1,4 @@
-FROM    wallabag/wallabag:2.3.8
+FROM    wallabag/wallabag:2.4.2
 
 ARG     BACKUP_DATE
 

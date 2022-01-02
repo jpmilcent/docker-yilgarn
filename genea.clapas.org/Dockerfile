@@ -1,4 +1,4 @@
-FROM    nginx:1.18.0
+FROM    nginx:1.21.4
 
 ARG     BACKUP_DATE
 

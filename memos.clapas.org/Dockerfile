@@ -1,12 +1,12 @@
-FROM php:7.3.18-fpm-buster
+FROM php:7.4.27-fpm-buster
 
 LABEL author="Jean-Pascal MILCENT" \
-  version="2" \
+  version="3" \
   maintainer="jpm@clapas.org"
 
-ENV DW_VERSION=2018-04-22c
+ENV DW_VERSION=2020-07-29
 ENV DW_DOWNLOAD_URL=https://download.dokuwiki.org/src/dokuwiki/dokuwiki-${DW_VERSION}.tgz
-ENV DW_MD5_CHECKSUM=6272e552b9a71a764781bd4182dd2b7d
+ENV DW_MD5_CHECKSUM=8867b6a5d71ecb5203402fe5e8fa18c9
 
 RUN apt-get update && \
     apt-get -y upgrade && \
@@ -16,7 +16,7 @@ RUN apt-get update && \
         libjpeg62-turbo-dev \
         libpng-dev && \
     docker-php-ext-install -j$(nproc) iconv && \
-    docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ && \
+    docker-php-ext-configure gd --with-freetype --with-jpeg && \
     docker-php-ext-install -j$(nproc) gd
 
 RUN apt-get clean autoclean

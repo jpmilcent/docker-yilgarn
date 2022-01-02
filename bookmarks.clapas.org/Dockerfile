@@ -1,4 +1,4 @@
-FROM    shaarli/shaarli:v0.11.1
+FROM    shaarli/shaarli:v0.12.1
 
 ARG     BACKUP_DATE
 
