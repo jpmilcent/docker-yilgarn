@@ -1,0 +1,87 @@
+<!doctype html>
+<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="{{configuration param="lang"}}"> <![endif]-->
+<!--[if IE 7]>		<html class="no-js lt-ie9 lt-ie8" lang="{{configuration param="lang"}}"> <![endif]-->
+<!--[if IE 8]>		<html class="no-js lt-ie9" lang="{{configuration param="lang"}}"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="{{configuration param="lang"}}"> <!--<![endif]-->
+	<head lang="fr">
+		<!-- HTML Metas -->
+		<meta charset="{{configuration param="charset"}}">
+		{{metarobots}}
+		<meta name="keywords" content="{{configuration param="meta_keywords"}}" />
+		<meta name="description" content="{{configuration param="meta_description"}}" />
+		<meta name="viewport" content="width=device-width" />
+
+		<!-- Title of the page -->
+		<title>{{configuration param="wakka_name"}} : {{currentpage}}</title>
+		
+		<!-- Favicons -->
+		<link rel="shortcut icon" type="image/x-icon" href="{{configuration param="theme_path"}}images/favicon.ico" />
+		<link rel="apple-touch-icon" href="{{configuration param="theme_path"}}images/apple-touch-icon.png" />
+		<link rel="icon" type="image/png" href="{{configuration param="theme_path"}}images/favicon.png" />
+		
+		{{linkstyle othercss="bootstrap/bootstrap-responsive.min.css"}}
+		{{linkrss}}
+	</head>
+
+	<body {{parambody}}>
+		<div class="navbar navbar-fixed-top">
+			<div class="navbar-inner">
+				<div class="container-fluid">
+					<button class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse" type="button">
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</button>
+					<a class="brand" rel="tooltip" data-placement="right" href="/" title="Retour à l'accueil du site.">
+						<img src="{{configuration param="theme_path"}}images/logo.png" alt="Logo Memos" />
+					</a>
+					<a class="brand" href="{{configuration param="base_url"}}{{configuration param="root_page"}}" rel="tooltip" data-placement="right" title="Retour à la page principale de ce Wikini.">
+						{{configuration param="wakka_name"}}
+					</a>
+					
+					<div class="nav-collapse">
+						{{include page="PageMenuHaut" class="topnavpage" doubleclic="1" actif="1"}}
+						
+					</div>
+					<div class="btn-toolbar pull-right">
+						{{moteurrecherche class="navbar-search"}} 
+						{{login template="dropdown.tpl.html"}}
+						<a href="wakka.php?wiki=DerniersChangementsRss/xml" class="btn" title="S'abonner au flux RSS des derniers changements">
+							<img src="tools/templates/presentation/images/rss-icon12-black.png" alt="rss" />
+						</a>
+						<div class="clear"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="container-fluid main-body" role="main">
+			<div class="row-fluid">
+				<div class="span3">
+					<nav class="well sidebar-nav">
+						{{include page="PageMenu" doubleclic="1" actif="1"}}
+					</nav>
+				</div>
+				<div class="span9" {{doubleclic}} >
+					{WIKINI_PAGE}
+				</div>
+			</div>
+			<div class="row-fluid">
+				<div class="offset3 span9">
+					{{barreredaction class="form-actions"}}
+				</div>
+			</div>
+			<footer>
+				{{include page="PageFooter" doubleclic="1"}}
+			</footer><!-- end of footer -->
+		</div><!--/.fluid-container-->
+
+		{{linkjavascript}}
+		<script type="text/javascript">
+			$(document).ready(function() {
+				$('a[rel="tooltip"], .has-tooltip').tooltip();
+			});
+		</script>
+	</body>
+</html>

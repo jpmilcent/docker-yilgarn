@@ -1,0 +1,82 @@
+@import url('bootstrap/clapas/bootstrap.min.css');
+
+b {
+	font-weight: bold;
+}
+pre{
+	font-size:15px;
+}
+code,pre{
+	color:#666;
+}
+
+.page {
+	color:#333;
+}
+.main-body {
+	padding-top: 105px;
+}
+
+.navbar nav li ul {
+	display: none;
+}
+
+.topnavpage {
+	width:100%;
+}
+
+.footer a {
+	margin: 0 8px;
+}
+
+@media (max-width:767px) {
+	.main-body {
+		padding-top:0;
+	}
+}
+@media (min-width: 768px) and (max-width: 980px) {
+	.main-body {
+		padding-top:0;
+	}
+}
+@media (min-width: 980px) {
+	.modal {
+		width:800px;
+		margin-left:-400px;
+	}
+}
+
+.navbar-search .btn-group {
+	margin-top:10px;
+	margin-right:10px;
+}
+.nav-header{
+	text-transform:none;
+}
+.nav li + .nav-header {
+	margin-top:0;
+}
+
+
+.sidebar-nav {
+	padding: 5px;
+}
+.sidebar-nav .active-link {
+ background-color: rgb(238,238,238);
+ color: rgb(250,171,60);
+}
+
+.toc.well {
+	margin: 45px 2px;
+	padding: 5px;
+	top: 5px;
+}
+.toc.well .toc-title{
+	margin: 2px;
+}
+
+tt {
+	color:olive;
+	font-weight:600;
+	font-family:mono;
+}

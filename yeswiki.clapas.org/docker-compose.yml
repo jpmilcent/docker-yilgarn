@@ -1,0 +1,67 @@
+version: "3"
+
+services:
+
+  yeswiki-webserver:
+    image: nginx:1.17.6
+    container_name: yeswiki-webserver
+    restart: unless-stopped
+    depends_on:
+      - yeswiki-php
+      - yeswiki-database
+    expose:
+      - 80
+    environment:
+      VIRTUAL_HOST: yeswiki.clapas.org
+      LETSENCRYPT_HOST: yeswiki.clapas.org
+    volumes:
+      - yeswiki-storage:/var/www/html
+      - ./nginx/app.conf:/etc/nginx/conf.d/default.conf:ro
+
+  yeswiki-php:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        BACKUP_DATE: "2019-10-29"
+        YW_VERSION_NAME: "cercopitheque"
+        YW_VERSION_DATE: "2019-11-25-1"
+    image: yeswiki:cercopitheque
+    container_name: yeswiki-php
+    restart: unless-stopped
+    depends_on:
+      - yeswiki-database
+    expose:
+      - 9000
+    volumes:
+      - yeswiki-storage:/var/www/html
+      #- ./yeswiki/wakka.config.php:/var/www/html/wakka.config.php
+      #- ./yeswiki/themes:/var/www/html/themes
+
+  yeswiki-database:
+    image: mariadb:10.2.29
+    # https://hub.docker.com/_/mariadb
+    container_name: yeswiki-database
+    restart: unless-stopped
+    env_file: .env
+    expose:
+      - 3306
+    environment:
+      MYSQL_DATABASE: memos
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      # See : https://github.com/docker-library/mariadb/issues/160
+      MYSQL_INITDB_SKIP_TZINFO: "yes"
+    volumes:
+      - db-storage:/var/lib/mysql
+      - ./database/initdb.d/:/docker-entrypoint-initdb.d/
+
+volumes:
+  yeswiki-storage:
+  db-storage:
+
+networks:
+  default:
+    external:
+      name: nginx-proxy

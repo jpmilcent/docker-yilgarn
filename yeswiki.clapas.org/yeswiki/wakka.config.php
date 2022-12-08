@@ -1,0 +1,43 @@
+<?php
+// wakka.config.php cr&eacute;&eacute;e Thu Oct  9 17:51:06 2014
+// ne changez pas la wikini_version manuellement!
+
+$wakkaConfig = array (
+  'wakka_version' => '0.1.1',
+  'wikini_version' => '0.5.0',
+  'yeswiki_version' => 'cercopitheque',
+  'yeswiki_release' => '2017-11-25-1',
+  'debug' => 'no',
+  'mysql_host' => 'yeswiki-database:3306',
+  'mysql_database' => 'memos',
+  'mysql_user' => 'memos',
+  'mysql_password' => '${MYSQL_PASSWORD}',
+  'table_prefix' => 'memos_',
+  'base_url' => 'https://yeswiki.clapas.org/wakka.php?wiki=',
+  'rewrite_mode' => '0',
+  'meta_keywords' => '',
+  'meta_description' => '',
+  'action_path' => 'actions',
+  'handler_path' => 'handlers',
+  'header_action' => 'header',
+  'footer_action' => 'footer',
+  'navigation_links' => 'DerniersChangements :: DerniersCommentaires :: ParametresUtilisateur',
+  'referrers_purge_time' => 10000,
+  'pages_purge_time' => 10000,
+  'default_write_acl' => '+',
+  'default_read_acl' => '*',
+  'default_comment_acl' => '@admins',
+  'preview_before_save' => 0,
+  'allow_raw_html' => '1',
+  'timezone' => 'GMT',
+  'root_page' => 'PagePrincipale',
+  'wakka_name' => 'Memos',
+  'formatter_path' => 'formatters',
+  'default_language' => 'fr',
+  'db_charset' => 'utf8mb4',
+  'favorite_theme' => 'bootstrap',
+  'favorite_style' => 'clapas.css',
+  'favorite_squelette' => '2cols-left-clapas.tpl.html',
+  'hide_action_template' => '1',
+);
+?>
