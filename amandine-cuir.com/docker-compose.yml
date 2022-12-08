@@ -80,6 +80,37 @@ services:
       ADMINER_DESIGN: lucas-sandery
       ADMINER_DEFAULT_SERVER: amandine-cuir-database
 
+    amandine-cuir-backup:
+      container_name: amandine-cuir-backup
+      image: blacklabelops/volumerize:1.5.1
+      restart: unless-stopped
+      environment:
+        # Stop containers before backup
+        - VOLUMERIZE_CONTAINERS=amandine-cuir-database amandine-cuir-cms
+        # Backup on Host
+        - VOLUMERIZE_SOURCE1=/source
+        - VOLUMERIZE_TARGET1=file:///backup
+        - VOLUMERIZE_CACHE1=/volumerize-cache
+        # Backup on Freebox
+        #- VOLUMERIZE_SOURCE2=/source
+        #- VOLUMERIZE_TARGET2=sftp://
+        #- VOLUMERIZE_CACHE2=/volumerize-cache
+        # Schedule backup
+        - TZ=Europe/Paris
+        - VOLUMERIZE_JOBBER_TIME=0 20 * * * *
+        - VOLUMERIZE_FULL_IF_OLDER_THAN=7D
+        - VOLUMERIZE_DUPLICITY_OPTIONS=--dry-run
+        # Remove old backups
+        - JOB_NAME2=RemoveOldBackups
+        - JOB_COMMAND2=/etc/volumerize/remove-older-than 7D --force
+        - JOB_TIME2=0 0 * * * *
+      volumes:
+        - /var/run/docker.sock:/var/run/docker.sock
+        - ./backup/:/backup
+        - backup-cache-storage:/volumerize-cache
+        - wordpress-storage:/source/amandine-cuir-cms:ro
+        - db-storage:/source/amandine-cuir-database:ro
+
 volumes:
   wordpress-storage:
   db-storage:
