@@ -1,0 +1,49 @@
+services:
+  photoprism:
+    # See: https://hub.docker.com/r/photoprism/photoprism
+    image: photoprism/photoprism:240531-ce
+    # restart: unless-stopped
+    stop_grace_period: 10s
+    depends_on:
+      - mariadb
+    security_opt:
+      - seccomp:unconfined
+      - apparmor:unconfined
+    expose:
+      - 2342
+    env_file:
+      - ./.env
+    environment:
+      VIRTUAL_HOST: photo.clapas.org
+      LETSENCRYPT_HOST: photo.clapas.org
+      VIRTUAL_PORT: 2342
+    ## Start as non-root user before initialization (supported: 0, 33, 50-99, 500-600, and 900-1200):
+    user: "1003:1003"
+    ## Share hardware devices with FFmpeg and TensorFlow (optional):
+    devices:
+      - "/dev/dri:/dev/dri"  # Intel QSV
+    working_dir: "/photoprism" # do not change or remove
+    volumes:
+      - "/home/backups/photos/Dates:/photoprism/originals/dates"
+      - "/home/backups/photos/Lieux:/photoprism/originals/lieux"
+      # - "~/Import:/photoprism/import" # *Optional* base folder from which files can be imported to originals
+      - "./photoprism/storage:/photoprism/storage" # *Writable* storage folder for cache, database, and sidecar files (DO NOT REMOVE)
+
+  mariadb:
+    # See: https://hub.docker.com/_/mariadb
+    image: mariadb:11.4.2-noble
+    restart: unless-stopped
+    stop_grace_period: 5s
+    security_opt: # see https://github.com/MariaDB/mariadb-docker/issues/434#issuecomment-1136151239
+      - seccomp:unconfined
+      - apparmor:unconfined
+    env_file:
+      - ./.env
+    command: --innodb-buffer-pool-size=512M --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
+    volumes:
+      - "./mariadb/storage:/var/lib/mysql" # DO NOT REMOVE
+
+networks:
+  default:
+    external:
+      name: nginx-proxy
