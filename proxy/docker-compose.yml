@@ -2,7 +2,8 @@ version: "3.9"
 
 services:
   nginx-proxy:
-    image: jwilder/nginx-proxy:latest
+    image: jwilder/nginx-proxy:1.3.1
+    # https://hub.docker.com/r/jwilder/nginx-proxy
     container_name: nginx-proxy
     restart: unless-stopped
     ports:
