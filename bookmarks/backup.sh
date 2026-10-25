@@ -33,7 +33,7 @@ function createDailyBackup() {
 
   docker compose exec -T -u 0 bookmarks-shaarli \
     tar -cjf - -C / var/www/shaarli/data > "$temporary_file"
-  mv "$temporary_file" "$backup_file"
+  mv -f -- "$temporary_file" "$backup_file"
   TEMP_FILE=""
 
   logSuccess "Backup created: ${backup_file}"
