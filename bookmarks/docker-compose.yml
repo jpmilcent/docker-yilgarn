@@ -1,0 +1,24 @@
+services:
+
+  bookmarks-shaarli:
+    image: shaarli/shaarli:v0.16.10
+    # https://hub.docker.com/r/shaarli/shaarli/tags
+    container_name: bookmarks-shaarli
+    restart: unless-stopped
+    expose:
+      - 80
+    environment:
+      VIRTUAL_HOST: bookmarks.clapas.org
+      LETSENCRYPT_HOST: bookmarks.clapas.org
+    volumes:
+      - cache-shaarli-storage:/var/www/shaarli/cache
+      - data-shaarli-storage:/var/www/shaarli/data
+
+volumes:
+  cache-shaarli-storage:
+  data-shaarli-storage:
+
+networks:
+  default:
+    name: nginx-proxy
+    external: true
