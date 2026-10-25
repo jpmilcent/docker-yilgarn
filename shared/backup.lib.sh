@@ -34,7 +34,7 @@ function initBackupScript() {
   CONFIG_FILE=""
   SCRIPT_NAME="${script_path##*/}"
   SCRIPT_NAME="${SCRIPT_NAME%.sh}"
-  STACK="$(basename "$(dirname "$script_path")")"
+  STACK="$(basename "$(cd -- "$(dirname -- "$script_path")" && pwd)")"
   TEMP_FILE=""
   BACKUP_DIR="${BACKUP_DIR:-backup}"
   RETENTION_DAYS="${RETENTION_DAYS:-5}"
