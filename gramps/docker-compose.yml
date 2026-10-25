@@ -1,0 +1,48 @@
+services:
+  grampsweb: &grampsweb
+    image: ghcr.io/gramps-project/grampsweb:25.12.0
+    # Last functional version : 25.12.0
+    # Last tested version : 26.10.2
+    # https://github.com/gramps-project/gramps-web/pkgs/container/grampsweb
+    container_name: gramps-web
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      VIRTUAL_HOST: gramps.clapas.org
+      VIRTUAL_PORT: 5000
+      LETSENCRYPT_HOST: gramps.clapas.org
+      GUNICORN_NUM_WORKERS: 2
+    volumes:
+      - cache-gramps-storage:/app/cache
+      - index-gramps-storage:/app/indexdir
+      - secret-gramps-storage:/app/secret
+      - thumb-cache-gramps-storage:/app/thumbnail_cache
+      - tmp-gramps-storage:/tmp
+      - users-gramps-storage:/app/users
+      - ./data/gramps-db:/root/.gramps/grampsdb
+      - ./data/gramps-media:/app/media
+
+  celery:
+    <<: *grampsweb # YAML merge key copying the entire grampsweb service config
+    container_name: gramps-celery
+    environment: []
+    command: celery -A gramps_webapi.celery worker --loglevel=INFO --concurrency=2
+
+  redis:
+    image: docker.io/library/redis:8.10.2-alpine
+    # https://hub.docker.com/_/redis/
+    container_name: gramps-redis
+    restart: always
+
+volumes:
+  cache-gramps-storage:
+  index-gramps-storage:
+  secret-gramps-storage:
+  thumb-cache-gramps-storage:
+  tmp-gramps-storage:
+  users-gramps-storage:
+
+networks:
+  default:
+    name: nginx-proxy
+    external: true
