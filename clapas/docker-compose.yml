@@ -1,7 +1,7 @@
 services:
 
   clapas-webserver:
-    image: nginx:1.30.6
+    image: nginx:1.30.6-trixie
     # https://hub.docker.com/_/nginx
     container_name: clapas-webserver
     restart: unless-stopped
