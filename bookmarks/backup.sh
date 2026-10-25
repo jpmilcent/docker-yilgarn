@@ -186,8 +186,18 @@ function removeOldBackups() {
   age_minutes=$((retention_days * 1440))
   logInfo "Removing Shaarli backups older than ${retention_days} day(s)"
 
+  local latest_backup
+  latest_backup=$(find "$backup_dir" -maxdepth 1 -type f \
+    -name '*_shaarli_data_backup.tar.bz2' \
+    -printf '%f\n' | sort -r | sed -n '1p')
+
+  if [[ -z "$latest_backup" ]]; then
+    return 0
+  fi
+
   find "$backup_dir" -maxdepth 1 -type f \
     -name '*_shaarli_data_backup.tar.bz2' \
+    ! -name "$latest_backup" \
     -mmin "+${age_minutes}" \
     -print -delete
 }
