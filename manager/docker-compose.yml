@@ -1,20 +1,19 @@
-version: "3.9"
-
 services:
-  portainer:
-    image: portainer/portainer-ce:2.11.0
-    container_name: manager.clapas.ovh_portainer
+  manager-portainer:
+    image: portainer/portainer-ce:2.45.3
+    # https://hub.docker.com/r/portainer/portainer-ce
+    container_name: manager-portainer
     restart: unless-stopped
     env_file: .env
     expose:
       - 9000
       - 8000
-    hostname: ${HOSTNAME}
+    hostname: ${HOSTNAME:-yilgarn}
     environment:
       VIRTUAL_HOST: ${DOMAIN}
       VIRTUAL_PORT: 9000
       LETSENCRYPT_HOST: ${DOMAIN}
-    command: -H unix:///var/run/docker.sock --admin-password ${ENCRYPTED_PASSWORD}
+    command: -H unix:///var/run/docker.sock --admin-password '${ENCRYPTED_PASSWORD}'
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - portainer-storage:/data
@@ -24,5 +23,5 @@ volumes:
 
 networks:
   default:
-    external:
-      name: ${NETWORK}
+    name: ${NETWORK:-nginx-proxy}
+    external: true
