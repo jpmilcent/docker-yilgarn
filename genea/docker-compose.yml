@@ -1,0 +1,21 @@
+services:
+
+  genea-clapas-webserver:
+    image: nginx:1.30.6-trixie
+    # https://hub.docker.com/_/nginx
+    container_name: genea-clapas-webserver
+    restart: unless-stopped
+    expose:
+      - 80
+    environment:
+      VIRTUAL_HOST: genea.clapas.org
+      LETSENCRYPT_HOST: genea.clapas.org
+    volumes:
+      - ./nginx/app.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./nginx/.htpasswd:/var/www/.htpasswd
+      - ./data:/var/www/html:ro
+
+networks:
+  default:
+    name: nginx-proxy
+    external: true
