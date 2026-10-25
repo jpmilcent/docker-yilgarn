@@ -1,0 +1,19 @@
+services:
+
+  clapas-webserver:
+    image: nginx:1.30.6
+    # https://hub.docker.com/_/nginx
+    container_name: clapas-webserver
+    restart: unless-stopped
+    expose:
+      - 80
+    environment:
+      VIRTUAL_HOST: clapas.org,www.clapas.org
+      LETSENCRYPT_HOST: clapas.org,www.clapas.org
+    volumes:
+      - ./data:/usr/share/nginx/html
+
+networks:
+  default:
+    name: nginx-proxy
+    external: true
