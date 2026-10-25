@@ -1,4 +1,7 @@
 .env*
 !.env.sample
-gogs/app.ini
-backup/
+**/backup/*
+!**/backup/.gitkeep
+**/data/*
+!**/data/.gitkeep
+.htpasswd
