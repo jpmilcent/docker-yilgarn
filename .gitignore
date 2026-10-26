@@ -4,5 +4,7 @@
 !**/backup/.gitkeep
 **/data/*
 !**/data/.gitkeep
+**/storage/*
+!**/storage/.gitkeep
 .htpasswd
-archives/yeswiki/database/initdb.d/*.sql
+archives/**/database/initdb.d/*.sql

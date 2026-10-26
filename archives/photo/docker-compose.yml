@@ -1,7 +1,7 @@
 services:
   photoprism:
     # See: https://hub.docker.com/r/photoprism/photoprism
-    image: photoprism/photoprism:240531-ce
+    image: photoprism/photoprism:240915-ce
     # restart: unless-stopped
     stop_grace_period: 10s
     depends_on:
@@ -31,7 +31,7 @@ services:
 
   mariadb:
     # See: https://hub.docker.com/_/mariadb
-    image: mariadb:11.4.2-noble
+    image: mariadb:11.4.4-noble
     restart: unless-stopped
     stop_grace_period: 5s
     security_opt: # see https://github.com/MariaDB/mariadb-docker/issues/434#issuecomment-1136151239
@@ -45,5 +45,5 @@ services:
 
 networks:
   default:
-    external:
-      name: nginx-proxy
+    name: nginx-proxy
+    external: true
