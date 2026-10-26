@@ -1,5 +1,3 @@
-version: "3.9"
-
 services:
 
   amandine-cuir-webserver:
@@ -117,5 +115,5 @@ volumes:
 
 networks:
   default:
-    external:
-      name: nginx-proxy
+    name: nginx-proxy
+    external: true    
