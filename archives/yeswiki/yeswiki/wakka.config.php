@@ -11,7 +11,7 @@ $wakkaConfig = array (
   'mysql_host' => 'yeswiki-database:3306',
   'mysql_database' => 'memos',
   'mysql_user' => 'memos',
-  'mysql_password' => '${MYSQL_PASSWORD}',
+  'mysql_password' => '<password-mysql>',
   'table_prefix' => 'memos_',
   'base_url' => 'https://yeswiki.clapas.org/wakka.php?wiki=',
   'rewrite_mode' => '0',

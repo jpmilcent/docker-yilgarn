@@ -31,7 +31,6 @@ RUN     unzip yeswiki-${YW_VERSION_NAME}-${YW_VERSION_DATE}.zip
 RUN     rm yeswiki-${YW_VERSION_NAME}-${YW_VERSION_DATE}.zip
 RUN     mv ${YW_VERSION_NAME} ${HTML_PATH}
 COPY    ./yeswiki/wakka.config.php ${HTML_PATH}/wakka.config.php
-# TODO: replace ${MYSQL_PASSWORD} in ${HTML_PATH}/wakka.config.php file
 COPY    ./yeswiki/themes ${HTML_PATH}/themes
 RUN     chown -R www-data: ${HTML_PATH}
 
