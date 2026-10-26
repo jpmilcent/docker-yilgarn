@@ -1,0 +1,125 @@
+services:
+  influxdb:
+    image: influxdb:2.7.6
+    # https://hub.docker.com/_/influxdb
+    container_name: monitor-influxdb
+    restart: unless-stopped
+    expose:
+      - 8086
+    env_file:
+      - ./influxdb/.env.influxdb
+    networks:
+      - nginx-proxy
+      - monitoring
+    environment:
+      VIRTUAL_HOST: influxdb.clapas.org
+      VIRTUAL_PORT: 8086
+      LETSENCRYPT_HOST: influxdb.clapas.org
+    healthcheck:
+      test: "curl -f http://localhost:8086/ping"
+      interval: 5s
+      timeout: 10s
+      retries: 5
+    volumes:
+      - influxdb-storage:/var/lib/influxdb/data
+      - data-influxdb2-storage:/var/lib/influxdb2
+      - conf-influxdb2-storage:/etc/influxdb2
+
+  telegraf:
+    image: telegraf:1.31.1
+    # https://hub.docker.com/_/telegraf
+    container_name: monitor-telegraf
+    env_file:
+      - ./telegraf/.env.telegraf
+    hostname: ${HOSTNAME:-yilgarn}
+    restart: unless-stopped
+    depends_on:
+      - monitor-influxdb
+    networks:
+      - monitoring
+    # To authorize telgraf to access to /run/docker.sock set host docker gid
+    # Find docker gid with: stat -c '%g' /var/run/docker.sock
+    # Or run docker-compose like this:
+    user: "telegraf:${DOCKER_GID:-998}"
+    environment:
+      HOSTNAME: ${HOSTNAME:-yilgarn}
+      HOST_MOUNT_PREFIX: /host
+      HOST_ETC: /host/etc
+      HOST_PROC: /host/proc
+      HOST_PROC_MOUNTINFO: /host/proc/self/mountinfo
+      HOST_RUN: /host/run
+      HOST_SYS: /host/sys
+      HOST_VAR: /host/var
+      INFLUXDB2_INIT_ORG: ${INFLUXDB2_INIT_ORG}
+      INFLUXDB2_INIT_BUCKET: ${INFLUXDB2_INIT_BUCKET}
+      INFLUXDB2_TELEGRAF_TOKEN: ${INFLUXDB2_TELEGRAF_TOKEN}
+    volumes:
+      - ./telegraf/telegraf.conf:/etc/telegraf/telegraf.conf:ro
+      - /:/host:ro
+      - /run/utmp:/host/var/run/utmp
+      - /run/docker.sock:/var/run/docker.sock:ro
+      #- /opt/srvstatus/status.json:/opt/srvstatus/status.json
+
+  grafana:
+    image: grafana/grafana:11.0.1
+    # https://hub.docker.com/r/grafana/grafana
+    container_name: monitor-grafana
+    restart: unless-stopped
+    expose:
+      - 3000
+    env_file:
+      - ./grafana/.env.grafana
+    depends_on:
+      - monitor-influxdb
+    networks:
+      - nginx-proxy
+      - monitoring
+    environment:
+      VIRTUAL_HOST: monitor.clapas.ovh
+      VIRTUAL_PORT: 3000
+      LETSENCRYPT_HOST: monitor.clapas.ovh
+    volumes:
+      - grafana-storage:/var/lib/grafana
+
+  grafana-renderer:
+    image: grafana/grafana-image-renderer:3.11.0
+    # https://hub.docker.com/r/grafana/grafana-image-renderer
+    container_name: monitor-grafana-renderer
+    restart: unless-stopped
+    ports:
+      - 8081
+    environment:
+      ENABLE_METRICS: "true"
+    networks:
+      - monitoring
+
+  grafana-backup:
+    image: ysde/docker-grafana-backup-tool:1.4.2
+    # https://hub.docker.com/r/ysde/docker-grafana-backup-tool
+    container_name: monitor-grafana-backup
+    restart: "no"
+    profiles: ["backup"]
+    depends_on:
+      - monitor-grafana
+    networks:
+      - nginx-proxy
+      - monitoring
+    environment:
+      GRAFANA_TOKEN: ${GRAFANA_TOKEN}
+      GRAFANA_URL: http://monitor-grafana:3000
+      GRAFANA_ADMIN_ACCOUNT: ${GRAFANA_ADMIN_ACCOUNT}
+      GRAFANA_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD}
+      VERIFY_SSL: False
+    volumes:
+       - ./grafana/backup:/opt/grafana-backup-tool/_OUTPUT_
+
+volumes:
+  grafana-storage:
+  influxdb-storage:
+  data-influxdb2-storage:
+  conf-influxdb2-storage:
+
+networks:
+  nginx-proxy:
+    external: true
+  monitoring:
