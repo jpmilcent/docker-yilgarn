@@ -7,9 +7,8 @@ cd "$SCRIPT_DIR"
 source "${SCRIPT_DIR}/../shared/backup.lib.sh"
 
 function main() {
-  local -a volume_names=(dokuwiki data plugins conf tpl)
+  local -a volume_names=(data plugins conf tpl)
   local -a volume_paths=(
-    /var/www/html
     /var/www/html/data
     /var/www/html/lib/plugins
     /var/www/html/conf
@@ -48,8 +47,14 @@ function createDailyBackup() {
 
   logInfo "Creating daily ${current_date} ${volume_name} volume backup"
 
+  local -a tar_options=(--one-file-system)
+
+  if [[ "$volume_name" == "data" ]]; then
+    tar_options+=(--exclude='./media/wiki/backup')
+  fi
+
   docker compose exec -T -u 0 memos-clapas-dokuwiki \
-    tar -cjf - --one-file-system -C "$volume_path" . > "$temporary_file"
+    tar -cjf - "${tar_options[@]}" -C "$volume_path" . > "$temporary_file"
   mv -f -- "$temporary_file" "$backup_file"
   TEMP_FILE=""
 

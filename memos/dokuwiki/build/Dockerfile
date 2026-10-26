@@ -16,6 +16,7 @@ RUN apt-get update && \
     apt-get -y install \
         wget \
         ca-certificates \
+        vim \
         msmtp \
         gettext-base \
         libfreetype6-dev \
@@ -29,8 +30,7 @@ RUN apt-get update && \
       gd \
       intl \
       zip \
-      bz2 \
-      opcache && \
+      bz2 && \
     apt-get clean autoclean && \
     apt-get -y autoremove && \
     rm -rf /var/lib/{apt,dpkg,cache,log}
