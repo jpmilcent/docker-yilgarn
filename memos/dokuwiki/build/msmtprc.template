@@ -1,0 +1,15 @@
+# Paramètres globaux
+defaults
+logfile /var/log/msmtp.log
+tls on
+tls_starttls on
+tls_trust_file /etc/ssl/certs/ca-certificates.crt
+
+# Configuration du compte d'envoi par défaut
+account default
+host ${SMTP_HOST}
+port ${SMTP_PORT}
+auth ${SMTP_AUTH}
+user ${SMTP_USER}
+password ${SMTP_PASSWORD}
+from ${SMTP_FROM}

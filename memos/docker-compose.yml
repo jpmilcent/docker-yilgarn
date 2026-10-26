@@ -1,0 +1,58 @@
+services:
+
+  memos-clapas-webserver:
+    image: nginx:1.30.6
+    # https://hub.docker.com/_/nginx
+    container_name: memos-clapas-webserver
+    restart: unless-stopped
+    expose:
+      - 80
+    depends_on:
+      - memos-clapas-dokuwiki
+    environment:
+      VIRTUAL_HOST: memos.clapas.org
+      LETSENCRYPT_HOST: memos.clapas.org
+    volumes:
+      - ./nginx/app.conf:/etc/nginx/conf.d/default.conf:ro
+      # Uniquement les assets statiques nécessaires, tous en lecture seule (:ro)
+      - dokuwiki-storage:/var/www/html:ro
+      - plugins-dokuwiki-storage:/var/www/html/lib/plugins/:ro
+      - tpl-dokuwiki-storage:/var/www/html/lib/tpl/:ro
+
+  memos-clapas-dokuwiki:
+    build:
+      context: ./dokuwiki/build
+      dockerfile: Dockerfile
+      args:
+        DW_VERSION: ${DW_VERSION_DATE}
+        DW_MD5_CHECKSUM: ${DW_MD5_CHECKSUM}
+    image: clapas/dokuwiki:${DW_VERSION_DATE}-${DW_VERSION_CODE}
+    container_name: memos-clapas-dokuwiki
+    restart: unless-stopped
+    expose:
+      - 9000
+    environment:
+      - SMTP_HOST=ssl0.ovh.net
+      - SMTP_PORT=587
+      - SMTP_AUTH=login
+      - SMTP_USER=${MSMTP_USER}
+      - SMTP_PASSWORD=${MSMTP_PASSWORD}
+      - SMTP_FROM=${MSMTP_USER}
+    volumes:
+      - dokuwiki-storage:/var/www/html
+      - data-dokuwiki-storage:/var/www/html/data
+      - plugins-dokuwiki-storage:/var/www/html/lib/plugins/
+      - conf-dokuwiki-storage:/var/www/html/conf
+      - tpl-dokuwiki-storage:/var/www/html/lib/tpl/
+
+volumes:
+  dokuwiki-storage:
+  data-dokuwiki-storage:
+  plugins-dokuwiki-storage:
+  conf-dokuwiki-storage:
+  tpl-dokuwiki-storage:
+
+networks:
+  default:
+    name: nginx-proxy
+    external: true
