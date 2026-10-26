@@ -1,0 +1,63 @@
+services:
+
+  git-nginx:
+    image: nginx:1.30.6
+    # https://hub.docker.com/_/nginx
+    container_name: git-nginx
+    restart: unless-stopped
+    networks:
+      - default
+      - gitea
+    expose:
+      - 80
+    depends_on:
+      - git-gitea
+    environment:
+      VIRTUAL_HOST: gitea.clapas.org
+      LETSENCRYPT_HOST: gitea.clapas.org
+    volumes:
+      - ./nginx/app.conf:/etc/nginx/conf.d/default.conf:ro
+
+  git-gitea:
+    image: docker.gitea.com/gitea:28.2.0
+    # https://hub.docker.com/r/gitea/gitea
+    container_name: git-gitea
+    restart: always
+    networks:
+      - gitea
+    expose:
+      - 3000
+    ports:
+      - "127.0.0.1:52222:22"
+    environment:
+      - USER=git
+      - USER_UID=110
+      - USER_GID=116
+      - GITEA__mailer__ENABLED=${GITEA_MAILER_ENABLED:?false}
+      - GITEA__mailer__FROM=${GITEA_MAILER_FROM}
+      - GITEA__mailer__PROTOCOL=${GITEA_MAILER_PROTOCOL:?smtps}
+      - GITEA__mailer__SMTP_ADDR=${GITEA_MAILER_SMTP_ADDR}
+      - GITEA__mailer__SMTP_PORT=${GITEA_MAILER_SMTP_PORT}
+      - GITEA__mailer__USER=${GITEA_MAILER_USER}
+      - GITEA__mailer__PASSWD=${GITEA_MAILER_PASSWD}
+      - GITEA__security__SECRET_KEY=${GITEA_SECURITY_SECRET_KEY}
+      - GITEA__security__INTERNAL_TOKEN=${GITEA_SECURITY_INTERNAL_TOKEN}
+      - GITEA__service__DISABLE_REGISTRATION=${GITEA_SERVICE_DISABLE_REGISTRATION:?true}
+    volumes:
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+      - gitea-storage:/data
+      - ./backup:/backup
+
+volumes:
+  gitea-storage:
+    name: gitea-storage
+    driver: local
+
+networks:
+  default:
+    name: nginx-proxy
+    external: true
+  gitea:
+    name: gitea
+    external: false
