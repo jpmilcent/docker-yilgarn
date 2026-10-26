@@ -7,7 +7,7 @@ cd "$SCRIPT_DIR"
 source "${SCRIPT_DIR}/../shared/backup.lib.sh"
 
 function main() {
-  initBackupScript "$0"
+  initBackupScript "${SCRIPT_DIR}/${0##*/}"
   parseBackupArgs "$@"
   checkBackupVariables
   registerBackupTraps
