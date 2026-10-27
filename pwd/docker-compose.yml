@@ -36,7 +36,7 @@ services:
     expose:
       - 3306
     env_file:
-      - ./mysql/.env
+      - ./mariadb/.env
     volumes:
       - database-storage:/var/lib/mysql
 
