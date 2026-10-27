@@ -1,0 +1,73 @@
+services:
+    gtt-mariadb:
+        image: 'mariadb:10.6'
+        container_name: gtt-mariadb
+        restart: unless-stopped
+        working_dir: /gtt
+        expose:
+            - 3306
+        env_file: .env
+        environment:
+            - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+            - MYSQL_DATABASE=${MYSQL_DATABASE}
+            - MYSQL_USER=${MYSQL_USER}
+            - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+            # See : https://github.com/docker-library/mariadb/issues/160
+            - MYSQL_INITDB_SKIP_TZINFO="yes"
+        volumes:
+            - data/:/gtt
+            - data/documentation/gtt_installation.sql:/docker-entrypoint-initdb.d/001_gtt_installation.sql
+            - data/documentation/gtt_maj_001.sql:/docker-entrypoint-initdb.d/002_gtt_maj_001.sql
+            - db-storage:/var/lib/mysql
+
+    gtt-webserver:
+        image: 'nginx:alpine'
+        container_name: gtt-webserver
+        restart: unless-stopped
+        working_dir: /gtt
+        expose:
+            - 80
+        depends_on:
+            - gtt-php-fpm
+            - gtt-mariadb
+        environment:
+            VIRTUAL_HOST: gtt.clapas.org
+            LETSENCRYPT_HOST: gtt.clapas.org
+        volumes:
+            - './nginx/nginx.conf:/etc/nginx/conf.d/default.conf'
+            - 'data/:/gtt'
+
+    gtt-php-fpm:
+        build: php-fpm
+        container_name: gtt-php-fpm
+        working_dir: /gtt
+        depends_on:
+            - gtt-mariadb
+        expose:
+            - 80
+        volumes:
+            - 'data/:/gtt'
+            - './php-fpm/php-ini-overrides.ini:/etc/php/7.4/fpm/conf.d/99-overrides.ini'
+
+    gtt-adminer:
+        image: adminer:6.1.2-standalone
+        # https://hub.docker.com/_/adminer
+        container_name: gtt-adminer
+        restart: unless-stopped
+        expose:
+            - 8080
+        depends_on:
+            - gtt-mariadb
+        environment:
+            VIRTUAL_HOST: adminer.gtt.clapas.org
+            LETSENCRYPT_HOST: adminer.gtt.clapas.org
+            ADMINER_DESIGN: lucas-sandery
+            ADMINER_DEFAULT_SERVER: gtt-mariadb
+
+volumes:
+    db-storage:
+
+networks:
+  default:
+    name: nginx-proxy
+    external: true
