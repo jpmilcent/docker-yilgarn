@@ -12,7 +12,7 @@ services:
       LETSENCRYPT_HOST: genea.clapas.org
     volumes:
       - ./nginx/app.conf:/etc/nginx/conf.d/default.conf:ro
-      - ./nginx/.htpasswd:/var/www/.htpasswd
+      - ../shared/.htpasswd:/var/www/.htpasswd:ro
       - ./data:/var/www/html:ro
 
 networks:
