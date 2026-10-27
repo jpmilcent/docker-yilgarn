@@ -1,14 +1,12 @@
-version: "3.9"
-
 services:
 
   pwd-clapas-passbolt:
-    image: passbolt/passbolt:3.12.2-1-ce
+    image: passbolt/passbolt:5.17.0-1-ce
     # https://hub.docker.com/r/passbolt/passbolt
     container_name: pwd-clapas-passbolt
     restart: always
     expose:
-      - 80
+      - 443
     networks:
       - passbolt-net
       - nginx-proxy
@@ -19,14 +17,17 @@ services:
     environment:
       VIRTUAL_HOST: pwd.clapas.org
       LETSENCRYPT_HOST: pwd.clapas.org
+      VIRTUAL_PROTO: https
+      VIRTUAL_PORT: 443
     volumes:
       - gpg-storage:/etc/passbolt/gpg
+      - jwt-storage:/etc/passbolt/jwt
       - images-storage:/usr/share/php/passbolt/webroot/img/public
     tty: true
     command: ["/docker-entrypoint.sh"]
 
   pwd-clapas-database:
-    image: mariadb:10.7.8
+    image: mariadb:11.8.9
     # https://hub.docker.com/_/mariadb
     container_name: pwd-clapas-database
     restart: unless-stopped
@@ -43,6 +44,7 @@ volumes:
   database-storage:
   gpg-storage:
   images-storage:
+  jwt-storage:
 
 networks:
   nginx-proxy:
