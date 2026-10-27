@@ -1,27 +1,51 @@
 # Gramps
 
-Le service `grampsweb` utilise le volume Docker `users-gramps-storage` pour stocker des données sur les utilisateurs et le dossier `data/` présent sur l'hôte pour stocker ses données. Après avoir démarré le compose, si nécessaire, restaurez une sauvegarde une seule fois pour initialiser ce volume.
+La stack Gramps Web stocke les arbres et médias dans `data/gramps-db` et `data/gramps-media` sur l’hôte. Les informations des utilisateurs sont dans le volume Docker `users-gramps-storage`. Configurez `.env` à partir de `.env.sample` avant de démarrer la stack ; ce fichier contient des secrets et doit être conservé de manière sécurisée.
 
-Depuis ce dossier, démarrez d'abord le service :
+Depuis ce dossier, démarrez les services :
 
 ```sh
 docker compose up -d
 ```
 
-Puis extrayez l'archive voulue dans le conteneur (remplacez le nom par celui de votre sauvegarde) :
-
-```sh
-docker compose exec -T -u 0 grampsweb sh -c 'tar -xjf - -C / < backup/2025-10-25_users_backup.tar.bz2
-```
-
-Cette restauration remplace les fichiers correspondants dans le volume. Elle est à faire lors de son initialisation, pas à chaque redémarrage.
-
 ## Créer une sauvegarde
 
-Le script `backup.sh` sauvegarde les données du conteneur en cours d'exécution dans `backup/`, avec le format `AAAA-MM-JJ_users_backup.tar.bz2` mais également le contenu du dossier `data/` sur l'hôte dans `backup/`, avec le format `AAAA-MM-JJ_gramps_backup.tar.bz2` :
+Le script `backup.sh` sauvegarde les données de l’hôte dans `backup/AAAA-MM-JJ_gramps_backup.tar.gz` et le volume des utilisateurs dans `backup/AAAA-MM-JJ_users_backup.tar.bz2` :
 
 ```sh
 bash ./backup.sh
 ```
 
-Il faut exécuter cette commande depuis ce dossier, avec le service démarré.
+Exécutez la commande depuis ce dossier, avec le service `grampsweb` démarré. Les autres volumes Docker de la stack (cache, index, secret, cache de miniatures et temporaire) ne sont pas inclus dans ces archives.
+
+## Restaurer une sauvegarde
+
+Arrêtez les services web et Celery avant la restauration :
+
+```sh
+docker compose stop grampsweb celery
+```
+
+Restaurez l’archive des données de l’hôte dans `data/` (le dossier doit exister) :
+
+```sh
+tar -xzf backup/AAAA-MM-JJ_gramps_backup.tar.gz -C data
+```
+
+Restaurez l’archive des utilisateurs dans le volume Docker :
+
+```sh
+docker compose run --rm --no-deps -T -u 0 --entrypoint tar \
+  grampsweb -xjf - -C / \
+  < backup/AAAA-MM-JJ_users_backup.tar.bz2
+```
+
+Cette archive contient le chemin `app/users`. La restauration remplace les fichiers correspondants dans `data/` et dans le volume des utilisateurs. Elle est à effectuer pour récupérer les données, pas à chaque redémarrage.
+
+Après la restauration, redémarrez les services :
+
+```sh
+docker compose up -d
+```
+
+Conservez également `.env` de manière sécurisée : les archives décrites ici ne sauvegardent pas ce fichier de configuration.

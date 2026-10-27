@@ -2,7 +2,7 @@
 
 ## Configuration de l'hôte
 
-- Modifier le fichier *.bachrc* de root : `vi /root/.bashrc`
+- Modifier le fichier *.bashrc* de root : `vi /root/.bashrc`
   - Décommenter les lignes d'alias
   - Ajouter le prompt en couleur : `PS1='${debian_chroot:+($debian_chroot)}\[\033[01;31m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '`
 - Créer un fichier `/etc/profile.d/00-aliases.sh` et y mettre les alias communs à tous les utilisateurs : `alias ll='ls -al'`
@@ -39,10 +39,13 @@ Pour synchroniser ces fichiers avec le serveur utiliser `rsync` :
 ```shell
 rsync -av --delete-excluded \
   --exclude='/.git' \
-  --exclude='/.gitignore'  \
+  --exclude='/.gitignore' \
+  --exclude='/.gitkeep' \
   --exclude='/.editorconfig' \
+  --exclude='/data' \
+  --exclude='/backup' \
   ./ \
-  admin@yilgarn:/home/admin/yilgarn/
+  admin@yilgarn:/home/admin/docker/
  ```
 
 ### Étapes
@@ -111,13 +114,6 @@ rsync -av --delete-excluded \
 - Se connecter en tant que `git` : `su - git`
 - Générer une clé SSH pour l'utilisateur `git` de l'hôte : `ssh-keygen`
 
-#### Passbolt
-
-- Installer habeged : `aptitude install haveged`
-- Tester l'envoie d'email :
-  - se connecter dans le container : `docker exec -it <container-name> /bin/bash`
-  - lancer la commande : `./bin/cake passbolt send_test_email --recipient=youremail@domain.com`
-
 ## Notes sur Docker
 
 ### Création d'une image contenant un backup
@@ -139,6 +135,6 @@ Solution alternative : `RUN tar xfj gogs.tar.bz2 -C /data --strip-components 1 &
 
 - Hôte : ssl0.ovh.net
 - Port : 587
-- Username : jean-pascal.milcent@clapas.org (mettre l'adresse du compte email et pas un alias)
+- Username : mailer@clapas.org (mettre l'adresse du compte email et pas un alias)
 - Password : le mot de passe
 - TLS : true
