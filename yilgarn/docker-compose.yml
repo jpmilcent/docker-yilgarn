@@ -1,0 +1,41 @@
+services:
+
+  yilgarn-clapas-webserver:
+    image: nginx:1.30.6
+    # https://hub.docker.com/_/nginx
+    container_name: yilgarn-clapas-webserver
+    restart: unless-stopped
+    group_add:
+      - "${DATA_GID:?Define DATA_GID in .env}"
+    # TODO: a better alternative is to use a Dockerfile with or without an entrypoint
+    command: >
+      sh -c "groupadd -g ${DATA_UID} datagroup 2>/dev/null || true &&
+             sed -i 's/^user  nginx.*/user nginx datagroup;/' /etc/nginx/nginx.conf &&
+             nginx -g 'daemon off;'"
+    expose:
+      - 80
+    depends_on:
+      - yilgarn-clapas-php
+    environment:
+      VIRTUAL_HOST: yilgarn.clapas.ovh
+      LETSENCRYPT_HOST: yilgarn.clapas.ovh
+    volumes:
+      - ./nginx/app.conf:/etc/nginx/conf.d/default.conf:ro
+      - ../shared/.htpasswd:/var/www/.htpasswd:ro
+      - ./data:/var/www/html
+
+  yilgarn-clapas-php:
+    image: php:8.5.12-fpm-trixie
+    # https://hub.docker.com/_/php
+    container_name: yilgarn-clapas-php
+    restart: unless-stopped
+    user: "${DATA_UID}:${DATA_GID}"
+    expose:
+      - 9000
+    volumes:
+      - ./data:/var/www/html
+
+networks:
+  default:
+    name: nginx-proxy
+    external: true
