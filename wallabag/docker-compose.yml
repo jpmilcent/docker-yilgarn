@@ -1,16 +1,9 @@
-version: "3.9"
-
 services:
 
   wallabag:
-    # https://hub.docker.com/r/wallabag/wallabag
-    build:
-      context: .
-      dockerfile: Dockerfile
-      args:
-        BACKUP_DATE: "2021-12-28"
-    image: wallabag/wallabag:2.4.2
-    container_name: wallabag.clapas.org
+    image: wallabag/wallabag:2.6.14.1
+    # https://hub.docker.com/r/wallabag/wallabag/tags
+    container_name: wallabag
     restart: unless-stopped
     expose:
       - 80
@@ -28,5 +21,5 @@ volumes:
 
 networks:
   default:
-    external:
-      name: nginx-proxy
+    name: nginx-proxy
+    external: true
