@@ -1,9 +1,7 @@
-version: "3.9"
-
 services:
   nginx-proxy:
-    image: jwilder/nginx-proxy:1.3.1
-    # https://hub.docker.com/r/jwilder/nginx-proxy
+    image: nginxproxy/nginx-proxy:1.11.6
+    # https://hub.docker.com/r/nginxproxy/nginx-proxy/
     container_name: nginx-proxy
     restart: unless-stopped
     ports:
@@ -16,6 +14,7 @@ services:
       - dhparam:/etc/nginx/dhparam
       - certs:/etc/nginx/certs:ro
       - /var/run/docker.sock:/tmp/docker.sock:ro
+      - ./uploadsize.conf:/etc/nginx/conf.d/uploadsize.conf
     logging:
       driver: json-file
       options:
@@ -23,7 +22,8 @@ services:
         max-file: "10"
 
   nginx-proxy-letsencrypt:
-    image: jrcs/letsencrypt-nginx-proxy-companion:latest
+    image: nginxproxy/acme-companion:2.8.2
+    # https://hub.docker.com/r/nginxproxy/acme-companion
     container_name: nginx-proxy-letsencrypt
     depends_on:
       - nginx-proxy
@@ -51,7 +51,6 @@ volumes:
   certs:
 
 networks:
-  default:
-    external:
-      name: nginx-proxy
+  nginx-proxy:
+    external: true
 
