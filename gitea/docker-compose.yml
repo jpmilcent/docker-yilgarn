@@ -33,6 +33,7 @@ services:
       - USER=git
       - USER_UID=110
       - USER_GID=116
+      - GITEA__server__ROOT_URL=https://gitea.clapas.org/
       - GITEA__mailer__ENABLED=${GITEA_MAILER_ENABLED:?false}
       - GITEA__mailer__FROM=${GITEA_MAILER_FROM}
       - GITEA__mailer__PROTOCOL=${GITEA_MAILER_PROTOCOL:?smtps}
