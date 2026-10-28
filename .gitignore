@@ -8,3 +8,4 @@
 !**/storage/.gitkeep
 .htpasswd
 archives/**/database/initdb.d/*.sql
+**/gogs/app.ini
